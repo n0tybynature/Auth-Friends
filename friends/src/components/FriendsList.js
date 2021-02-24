@@ -1,34 +1,59 @@
 import React from "react";
-import axios from "axios";
-import Loader from "react-loader-spinner";
+
+import FriendForm from "./FriendsForm"
+import { axiosWithAuth } from "../utils/axiosWithAuth";
 
 
 
 class FriendsList extends React.Component {
     state = {
-        friendList: [],
+        friends: [],
     };
 
 
     componentDidMount(){
-        this.getData();
+        this.getFriends();
     }
 
 
-    getData = () => {
-
-        const token = JSON.parse(localStorage.getItem("token"));
-    
-
-        axios
-            .get("/api/friends")
-            .then((res) => {
+    getFriends = () => {
+        
+        axiosWithAuth()
+            .get('/api/friends')
+            .then( res => {
                 console.log(res)
-            })
 
-
-
+                this.setState({
+                    friends:res.data
+                    })
+                })
+            .catch( err => {
+                console.log(err);
+            });
     }
+           
+
+    render(){
+        return (
+            <div>
+                <FriendForm/>
+                <div className="friends-container">
+                    <h2>Friends List</h2>
+                    {this.state.friends.map( friend => {
+                    return <ul className="friends-list">
+                            <li><span>Name:</span> {friend.name}</li>
+                            <li><span>Age:</span> {friend.age}</li>
+                            <li><span>Email:</span> {friend.email}</li>
+                        </ul>
+                    })}
+                    
+                </div>
+            </div>
+        )
+    }
+
+
+
 
 
 
